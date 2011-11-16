@@ -2155,6 +2155,10 @@ void dvmDetachCurrentThread()
                 ALOGE("pthread_cond_signal(&gDvm.vmExitCond) failed: %s", strerror(cc));
                 dvmAbort();
             }
+#ifdef NDEBUG
+            // not used -> variable defined but not used warning
+            (void)cc;
+#endif
         }
     }
 
@@ -2714,6 +2718,10 @@ void dvmResumeAllThreads(SuspendCause why)
         ALOGE("pthread_cond_broadcast(&gDvm.threadSuspendCountCond) failed: %s", strerror(cc));
         dvmAbort();
     }
+#ifdef NDEBUG
+    // not used -> variable defined but not used warning
+    (void)cc;
+#endif
     unlockThreadSuspendCount();
 
     LOG_THREAD("threadid=%d: ResumeAll complete", self->threadId);
@@ -2765,6 +2773,10 @@ void dvmUndoDebuggerSuspensions()
         ALOGE("pthread_cond_broadcast(&gDvm.threadSuspendCountCond) failed: %s", strerror(cc));
         dvmAbort();
     }
+#ifdef NDEBUG
+    // not used -> variable defined but not used warning
+    (void)cc;
+#endif
     unlockThreadSuspendCount();
 
     unlockThreadSuspend();
