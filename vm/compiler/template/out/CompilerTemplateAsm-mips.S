@@ -3394,8 +3394,8 @@ dvmCompiler_TEMPLATE_INVOKE_METHOD_NATIVE_PROF:
     .word   dvmSelfVerificationMemOpDecode
 #endif
 
-    .global dmvCompilerTemplateEnd
-dmvCompilerTemplateEnd:
+    .global dvmCompilerTemplateEnd
+dvmCompilerTemplateEnd:
 
 #endif /* WITH_JIT */
 
