@@ -41,7 +41,8 @@ the system as an unprivileged user.  You can use
 <code>adb root</code> or run the <code>su</code> command from the device
 shell on "userdebug" builds to become root first.  When in doubt,
 <pre>adb shell getprop &lt;name&gt;</pre>
-will tell you if the <code>setprop</code> took.
+will tell you if the <code>setprop</code> took. If ro.secure=0 this is
+not necessary as you will be root from device shell by default.
 
 <p>If you don't want the property to evaporate when the device reboots,
 add a line to <code>/data/local.prop</code> that looks like:
