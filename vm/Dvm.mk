@@ -28,10 +28,6 @@ LOCAL_CFLAGS += -fstrict-aliasing -Wstrict-aliasing=2 -fno-align-jumps
 LOCAL_CFLAGS += -Wall -Wextra -Wno-unused-parameter
 LOCAL_CFLAGS += -DARCH_VARIANT=\"$(dvm_arch_variant)\"
 
-# Build with -O2 for the purpose of lowering dalvik optimizations so
-# we don't need to lower the optimization level globally.
-LOCAL_CFLAGS += -O2
-
 #
 # Optional features.  These may impact the size or performance of the VM.
 #
