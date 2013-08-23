@@ -47,7 +47,6 @@ public final class IndexMap {
     private final HashMap<Integer, Integer> typeListOffsets;
     private final HashMap<Integer, Integer> annotationOffsets;
     private final HashMap<Integer, Integer> annotationSetOffsets;
-    private final HashMap<Integer, Integer> annotationSetRefListOffsets;
     private final HashMap<Integer, Integer> annotationDirectoryOffsets;
     private final HashMap<Integer, Integer> staticValuesOffsets;
 
@@ -61,7 +60,6 @@ public final class IndexMap {
         this.typeListOffsets = new HashMap<Integer, Integer>();
         this.annotationOffsets = new HashMap<Integer, Integer>();
         this.annotationSetOffsets = new HashMap<Integer, Integer>();
-        this.annotationSetRefListOffsets = new HashMap<Integer, Integer>();
         this.annotationDirectoryOffsets = new HashMap<Integer, Integer>();
         this.staticValuesOffsets = new HashMap<Integer, Integer>();
 
@@ -94,13 +92,6 @@ public final class IndexMap {
             throw new IllegalArgumentException();
         }
         annotationSetOffsets.put(oldOffset, newOffset);
-    }
-
-    public void putAnnotationSetRefListOffset(int oldOffset, int newOffset) {
-        if (oldOffset <= 0 || newOffset <= 0) {
-            throw new IllegalArgumentException();
-        }
-        annotationSetRefListOffsets.put(oldOffset, newOffset);
     }
 
     public void putAnnotationDirectoryOffset(int oldOffset, int newOffset) {
@@ -158,10 +149,6 @@ public final class IndexMap {
 
     public int adjustAnnotationSet(int annotationSetOffset) {
         return annotationSetOffsets.get(annotationSetOffset);
-    }
-
-    public int adjustAnnotationSetRefList(int annotationSetRefListOffset) {
-        return annotationSetRefListOffsets.get(annotationSetRefListOffset);
     }
 
     public int adjustAnnotationDirectory(int annotationDirectoryOffset) {
