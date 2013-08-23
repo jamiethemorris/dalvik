@@ -36,6 +36,7 @@
 #include "test/Test.h"
 #include "mterp/Mterp.h"
 #include "Hash.h"
+#include "JniConstants.h"
 
 #if defined(WITH_JIT)
 #include "compiler/codegen/Optimizer.h"
@@ -120,8 +121,6 @@ static void usage(const char* progName)
     dvmFprintf(stderr, "  -Xzygote\n");
     dvmFprintf(stderr, "  -Xdexopt:{none,verified,all,full}\n");
     dvmFprintf(stderr, "  -Xnoquithandler\n");
-    dvmFprintf(stderr,
-                "  -Xjnigreflimit:N  (must be multiple of 100, >= 200)\n");
     dvmFprintf(stderr, "  -Xjniopts:{warnonly,forcecopy}\n");
     dvmFprintf(stderr, "  -Xjnitrace:substring (eg NativeClass or nativeMethod)\n");
     dvmFprintf(stderr, "  -Xstacktracefile:<filename>\n");
@@ -1075,13 +1074,7 @@ static int processOptions(int argc, const char* const argv[],
                 return -1;
             }
         } else if (strncmp(argv[i], "-Xjnigreflimit:", 15) == 0) {
-            int lim = atoi(argv[i] + 15);
-            if (lim < 200 || (lim % 100) != 0) {
-                dvmFprintf(stderr, "Bad value for -Xjnigreflimit: '%s'\n",
-                    argv[i]+15);
-                return -1;
-            }
-            gDvm.jniGrefLimit = lim;
+            // Ignored for backwards compatibility.
         } else if (strncmp(argv[i], "-Xjnitrace:", 11) == 0) {
             gDvm.jniTrace = strdup(argv[i] + 11);
         } else if (strcmp(argv[i], "-Xlog-stdio") == 0) {
@@ -1336,7 +1329,7 @@ static void blockSignals()
 #if defined(WITH_JIT) && defined(WITH_JIT_TUNING)
     sigaddset(&mask, SIGUSR2);      // used to investigate JIT internals
 #endif
-    //sigaddset(&mask, SIGPIPE);
+    sigaddset(&mask, SIGPIPE);
     cc = sigprocmask(SIG_BLOCK, &mask, NULL);
     assert(cc == 0);
 
@@ -1626,6 +1619,23 @@ static bool registerSystemNatives(JNIEnv* pEnv)
 
     // Must set this before allowing JNI-based method registration.
     self->status = THREAD_NATIVE;
+
+    // First set up JniConstants, which is used by libcore.
+    JniConstants::init(pEnv);
+
+    // Set up our single JNI method.
+    // TODO: factor this out if we add more.
+    jclass c = pEnv->FindClass("java/lang/Class");
+    if (c == NULL) {
+        dvmAbort();
+    }
+    JNIEXPORT jobject JNICALL Java_java_lang_Class_getDex(JNIEnv* env, jclass javaClass);
+    const JNINativeMethod Java_java_lang_Class[] = {
+        { "getDex", "()Lcom/android/dex/Dex;", (void*) Java_java_lang_Class_getDex },
+    };
+    if (pEnv->RegisterNatives(c, Java_java_lang_Class, 1) != JNI_OK) {
+        dvmAbort();
+    }
 
     // Most JNI libraries can just use System.loadLibrary, but you can't
     // if you're the library that implements System.loadLibrary!
@@ -2184,17 +2194,6 @@ void dvmAbort()
      */
     dvmPrintNativeBackTrace();
 
-    /*
-     * If we call abort(), all threads in the process receives a SIBABRT.
-     * debuggerd dumps the stack trace of the main thread, whether or not
-     * that was the thread that failed.
-     *
-     * By stuffing a value into a bogus address, we cause a segmentation
-     * fault in the current thread, and get a useful log from debuggerd.
-     * We can also trivially tell the difference between a VM crash and
-     * a deliberate abort by looking at the fault address.
-     */
-    *((char*)0xdeadd00d) = result;
     abort();
 
     /* notreached */

@@ -23,7 +23,6 @@ dalvikvm_src_files := \
     Main.cpp
 
 dalvikvm_c_includes := \
-    $(JNI_H_INCLUDE) \
     dalvik/include
 
 
@@ -64,7 +63,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
         LOCAL_LDLIBS := -lffi -lssl -lcrypto -lz
     else
         LOCAL_LDLIBS += -ldl -lpthread
-        LOCAL_SHARED_LIBRARIES += libdvm libcrypto libicuuc libicui18n libssl
+        LOCAL_SHARED_LIBRARIES += libdvm libcrypto-host libicuuc-host libicui18n-host libssl-host
     endif
 
     LOCAL_MODULE_TAGS := optional
