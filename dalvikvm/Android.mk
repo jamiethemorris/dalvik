@@ -37,8 +37,8 @@ LOCAL_C_INCLUDES := $(dalvikvm_c_includes)
 
 LOCAL_SHARED_LIBRARIES := \
     libdvm \
-    libssl \
-    libz
+    libminiz \
+    libssl
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := dalvikvm
