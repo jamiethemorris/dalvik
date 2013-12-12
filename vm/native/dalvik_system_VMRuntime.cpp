@@ -104,11 +104,11 @@ static void Dalvik_dalvik_system_VMRuntime_newNonMovableArray(const u4* args,
 
     if (elementClass == NULL) {
         dvmThrowNullPointerException("elementClass == null");
-        RETURN_VOID();
+        RETURN_PTR(NULL);
     }
     if (length < 0) {
         dvmThrowNegativeArraySizeException(length);
-        RETURN_VOID();
+        RETURN_PTR(NULL);
     }
 
     // TODO: right now, we don't have a copying collector, so there's no need
@@ -120,7 +120,7 @@ static void Dalvik_dalvik_system_VMRuntime_newNonMovableArray(const u4* args,
                                                  ALLOC_NON_MOVING);
     if (newArray == NULL) {
         assert(dvmCheckException(dvmThreadSelf()));
-        RETURN_VOID();
+        RETURN_PTR(NULL);
     }
     dvmReleaseTrackedAlloc((Object*) newArray, NULL);
 
@@ -238,6 +238,13 @@ static void Dalvik_dalvik_system_VMRuntime_registerNativeFree(const u4* args,
   }
   RETURN_VOID();
 }
+
+static void Dalvik_dalvik_system_VMRuntime_updateProcessState(const u4* args,
+                                                              JValue* pResult)
+{
+  RETURN_VOID();
+}
+
 
 static DvmDex* getDvmDexFromClassPathEntry(ClassPathEntry* cpe) {
     if (cpe->kind == kCpeDex) {
@@ -581,6 +588,8 @@ const DalvikNativeMethod dvm_dalvik_system_VMRuntime[] = {
         Dalvik_dalvik_system_VMRuntime_registerNativeAllocation },
     { "registerNativeFree", "(I)V",
         Dalvik_dalvik_system_VMRuntime_registerNativeFree },
+    { "updateProcessState", "(I)V",
+        Dalvik_dalvik_system_VMRuntime_updateProcessState },
     { "preloadDexCaches", "()V",
         Dalvik_dalvik_system_VMRuntime_preloadDexCaches },
     { NULL, NULL, NULL },
