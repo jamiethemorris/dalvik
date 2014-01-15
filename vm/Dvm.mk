@@ -276,7 +276,7 @@ ifeq ($(dvm_arch),arm)
 		compiler/template/out/CompilerTemplateAsm-$(dvm_arch_variant).S
   endif
 
-  ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
+  ifeq ($(BOARD_USES_LIBQC_OPT),true)
     LOCAL_WHOLE_STATIC_LIBRARIES += libqc-dalvik
     LOCAL_SHARED_LIBRARIES += libqc-opt
     LOCAL_CFLAGS += -DHAVE_HALFWORD_ATOMIC_MEMMOVE
