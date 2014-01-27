@@ -277,11 +277,9 @@ ifeq ($(dvm_arch),arm)
   endif
 
   ifeq ($(BOARD_USES_LIBQC_OPT),true)
-    ifneq ($(strip $(USER_HAS_PRIVATE_CFX_REPOS)),)
-      LOCAL_WHOLE_STATIC_LIBRARIES += libqc-dalvik
-      LOCAL_SHARED_LIBRARIES += libqc-opt
-      LOCAL_CFLAGS += -DHAVE_HALFWORD_ATOMIC_MEMMOVE
-    endif
+    LOCAL_WHOLE_STATIC_LIBRARIES += libqc-dalvik
+    LOCAL_SHARED_LIBRARIES += libqc-opt
+    LOCAL_CFLAGS += -DHAVE_HALFWORD_ATOMIC_MEMMOVE
   endif
 endif
 
