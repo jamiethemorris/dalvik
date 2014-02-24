@@ -55,6 +55,7 @@ include $(LOCAL_PATH)/ReconfigureDvm.mk
 
 # Overwrite default settings
 LOCAL_NO_LOOP_REROLL_SUPPORT := true
+LOCAL_NO_INTEGRATED_AS_SUPPORT := true
 LOCAL_MODULE := libdvm
 LOCAL_CFLAGS += $(target_smp_flag)
 ifeq ($(TARGET_ARCH),x86)
