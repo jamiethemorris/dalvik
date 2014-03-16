@@ -69,7 +69,7 @@ endif
 # Define WITH_ADDRESS_SANITIZER to build an ASan-instrumented version of the
 # library in /system/lib/asan/libdvm.so.
 ifneq ($(strip $(WITH_ADDRESS_SANITIZER)),)
-    LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/asan
+    LOCAL_MODULE_RELATIVE_PATH := asan
     LOCAL_ADDRESS_SANITIZER := true
     LOCAL_CFLAGS := $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(LOCAL_CFLAGS))
 endif
@@ -153,6 +153,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
     # time. When building this target as a regular static library, certain
     # dependencies like expat are not found by the linker.
     LOCAL_WHOLE_STATIC_LIBRARIES += libexpat libcutils libdex liblog libz
+    LOCAL_STATIC_LIBRARIES += libutils
 
     # The libffi from the source tree should never be used by host builds.
     # The recommendation is that host builds should always either

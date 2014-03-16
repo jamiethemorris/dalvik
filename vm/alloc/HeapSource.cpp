@@ -19,10 +19,6 @@
 #include <errno.h>
 #include <cutils/ashmem.h>
 
-#ifndef __STDINT_LIMITS
-#define SIZE_MAX UINT_MAX  // TODO: get SIZE_MAX from stdint.h
-#endif
-
 #include "Dalvik.h"
 #include "alloc/DlMalloc.h"
 #include "alloc/Heap.h"
@@ -416,7 +412,7 @@ static bool remapNewHeap(HeapSource* hs, Heap* newHeap)
     ALOGE("Unable to create an ashmem region for the new heap");
     return false;
   }
-  void* addr = mmap(newHeapBase, rem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+  void* addr = mmap(newHeapBase, rem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_FIXED, fd, 0);
   int ret = close(fd);
   if (addr == MAP_FAILED) {
     ALOGE("Unable to map an ashmem region for the new heap");
@@ -562,7 +558,14 @@ static void *gcDaemonThread(void* arg)
 static bool gcDaemonStartup()
 {
     dvmInitMutex(&gHs->gcThreadMutex);
+#if defined(__APPLE__)
     pthread_cond_init(&gHs->gcThreadCond, NULL);
+#else
+    pthread_condattr_t condAttr;
+    pthread_condattr_init(&condAttr);
+    pthread_condattr_setclock(&condAttr, CLOCK_MONOTONIC);
+    pthread_cond_init(&gHs->gcThreadCond, &condAttr);
+#endif  // defined(__APPLE__)
     gHs->gcThreadShutdown = false;
     gHs->hasGcThread = dvmCreateInternalThread(&gHs->gcThread, "GC",
                                                gcDaemonThread, NULL);
